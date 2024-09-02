@@ -20,7 +20,6 @@
                 <a href="{{ url('/') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Каталог</a>
 
                 @auth
-                    <a href="{{ route('cart.show') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Корзина</a>
                     <a href="{{ route('logout') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Выход</a>
                 @else
                     <a href="{{ route('login') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Вход</a>
@@ -39,23 +38,42 @@
 
                 <div class="mt-16">
                     <div class="grid grid-cols-4 md:grid-cols-4 gap-6 lg:gap-8">
-                        @foreach ($products as $product)
-                            <div class="product-card-block scale-100 p-6 bg-white dark:bg-gray-800/50 dark:bg-gradient-to-bl from-gray-700/50 via-transparent dark:ring-1 dark:ring-inset dark:ring-white/5 rounded-lg shadow-2xl shadow-gray-500/20 dark:shadow-none flex motion-safe:hover:scale-[1.01] transition-all duration-250 focus:outline focus:outline-2 focus:outline-red-500">
-                                <div>
-                                    <h2 class="mt-6 text-xl font-semibold text-gray-900 dark:text-white">{{ $product->name }}</h2>
-
-                                    <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                                        Цена:<br>{{ $product->price }} руб. / шт.
-                                    </p>
-                                    <!--<a href="#">В корзину</a>-->
-                                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                        @csrf
-                                        <input type="number" name="quantity" min="1" value="1">
-                                        <button type="submit">В корзину</button>
-                                    </form>
-                                </div>
-                            </div>
-                        @endforeach
+                        @if(isset($cart) && !empty($cart))
+                            <table width="1300px" style="text-align:left;">
+                                <thead>
+                                    <tr>
+                                        <th>Название</th>
+                                        <th>Цена</th>
+                                        <th>Количество</th>
+                                        <th>Сумма</th>
+                                        <th>#</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($cart as $id => $item)
+                                        <tr>
+                                            <td>{{ $item['name'] }}</td>
+                                            <td>{{ $item['price'] }} руб. / шт.</td>
+                                            <td>{{ $item['quantity'] }}</td>
+                                            <td>{{ number_format($item['price'] * $item['quantity'], 2, '.', ',') }} руб.</td>
+                                            <td>
+                                                <form action="{{ route('cart.update', $id) }}" method="POST">
+                                                    @csrf
+                                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1">
+                                                    <button class="cart-button" type="submit">Обновить</button>
+                                                </form>
+                                                <form action="{{ route('cart.remove', $id) }}" method="POST" style="display:inline;">
+                                                    @csrf
+                                                    <button class="cart-button" type="submit">Удалить из корзины</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <p>Корзина пуста.</p>
+                        @endif
                     </div>
                 </div>
 

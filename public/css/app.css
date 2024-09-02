@@ -9,3 +9,17 @@
 .product-card-block H2, .product-card-block P {
     cursor: default;
 }
+
+INPUT[type="number"] {
+    width: 55px;
+    display: block;
+    float: left;
+    margin-right: 15px;
+}
+
+.cart-button {
+    float: left;
+    margin-right: 15px;
+}
+
+

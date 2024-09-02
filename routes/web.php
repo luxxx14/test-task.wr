@@ -18,17 +18,19 @@ use App\Http\Controllers\CartController;
 */
 
 Route::get('/', [CatalogController::class, 'showCatalog']);
-Route::post('/add', [CartController::class, 'addToCart']);
-//});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/cart', [CartController::class, 'showCart'])->name('cart.show');
+    Route::post('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
+    Route::post('/cart/remove/{id}', [CartController::class, 'deleteCartItem'])->name('cart.remove');
+    Route::post('/cart/add/{id}', [CartController::class, 'addCartItem'])->name('cart.add');
+});
 
 
 Route::get('/register', function() {
     if (auth()->check()) {
         return redirect('/');
     }
-
-    //$controller = new RegisterController();
-    //return $controller->showRegistrationForm();
     return view('auth.register');
 })->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
@@ -38,9 +40,7 @@ Route::get('/login', function () {
     if (auth()->check()) {
         return redirect('/');
     }
-    
-    //$controller = new LoginController();
-    //return $controller->showLoginForm();
+
     return view('auth.login');
 })->name('login');
 Route::post('/login', [LoginController::class, 'login']);

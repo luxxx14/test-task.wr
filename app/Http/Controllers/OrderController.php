@@ -7,14 +7,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
+use App\Models\Order;
 
-class CatalogController extends Controller
+class OrderController extends Controller
 {
     protected $product;
+    protected $order;
 
-    public function __construct(Product $product)
-    {
+    public function __construct(
+        Product $product,
+        Order $order
+    ) {
         $this->product = $product;
+        $this->product = $order;
     }
 
     public function showCatalog() {
@@ -24,3 +29,4 @@ class CatalogController extends Controller
     }
 
 }
+
