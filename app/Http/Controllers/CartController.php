@@ -18,7 +18,7 @@ class CartController extends Controller
         $this->product = $product;
     }
 
-    protected function getCartKey()
+    public static function getCartKey()
     {
         return 'cart:' . auth()->id();
     }
@@ -53,6 +53,7 @@ class CartController extends Controller
             Redis::hSet($cartKey, $product_id, json_encode($cartItem));
         } else {
             $cartItem = [
+                'id' => $product->id,
                 'name' => $product->name,
                 'price' => $product->price,
                 'quantity' => $quantity,

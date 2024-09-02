@@ -29,7 +29,7 @@ INPUT[type="number"] {
 .cart-table {
     text-align:left;
 }
-.cart-table A {
+.order-confirm-button {
     margin-top: 25px;
     font-weight: bold;
     display: block;
