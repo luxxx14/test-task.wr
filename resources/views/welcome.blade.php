@@ -51,7 +51,7 @@
                                     <form action="{{ route('cart.add', $product->id) }}" method="POST">
                                         @csrf
                                         <input type="number" name="quantity" min="1" value="1">
-                                        <button type="submit">В корзину</button>
+                                        <button class="add-cart-button" type="submit">В корзину</button>
                                     </form>
                                 </div>
                             </div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update/{id}', [CartController::class, 'updateCart'])->name('cart.update');
     Route::post('/cart/remove/{id}', [CartController::class, 'deleteCartItem'])->name('cart.remove');
     Route::post('/cart/add/{id}', [CartController::class, 'addCartItem'])->name('cart.add');
+
+    Route::post('/order/confirm', [OrderController::class, 'confirmOrder'])->name('order.confirm');
 });
 
 

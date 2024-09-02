@@ -16,10 +16,22 @@ INPUT[type="number"] {
     float: left;
     margin-right: 15px;
 }
+.add-cart-button {
+    text-decoration: underline;
+}
 
 .cart-button {
     float: left;
     margin-right: 15px;
+    text-decoration: underline;
 }
 
-
+.cart-table {
+    text-align:left;
+}
+.cart-table A {
+    margin-top: 25px;
+    font-weight: bold;
+    display: block;
+    text-decoration: underline;
+}

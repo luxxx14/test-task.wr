@@ -39,36 +39,51 @@
                 <div class="mt-16">
                     <div class="grid grid-cols-4 md:grid-cols-4 gap-6 lg:gap-8">
                         @if(isset($cart) && !empty($cart))
-                            <table width="1300px" style="text-align:left;">
+
+                            <table width="1300px" class="cart-table">
                                 <thead>
                                     <tr>
                                         <th>Название</th>
                                         <th>Цена</th>
                                         <th>Количество</th>
                                         <th>Сумма</th>
-                                        <th>#</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($cart as $id => $item)
+                                        @if(is_array($item))
+                                            <tr>
+                                                <td>{{ $item['name'] }}</td>
+                                                <td>{{ $item['price'] }} руб. / шт.</td>
+                                                <td>{{ $item['quantity'] }}</td>
+                                                <td>{{ number_format($item['price'] * $item['quantity'], 2, '.', ',') }} руб.</td>
+                                                <td>
+                                                    <form action="{{ route('cart.update', $id) }}" method="POST">
+                                                        @csrf
+                                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1">
+                                                        <button class="cart-button" type="submit">Обновить</button>
+                                                    </form>
+                                                    <form action="{{ route('cart.remove', $id) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button class="cart-button" type="submit">Удалить из корзины</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
                                         <tr>
-                                            <td>{{ $item['name'] }}</td>
-                                            <td>{{ $item['price'] }} руб. / шт.</td>
-                                            <td>{{ $item['quantity'] }}</td>
-                                            <td>{{ number_format($item['price'] * $item['quantity'], 2, '.', ',') }} руб.</td>
-                                            <td>
-                                                <form action="{{ route('cart.update', $id) }}" method="POST">
-                                                    @csrf
-                                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1">
-                                                    <button class="cart-button" type="submit">Обновить</button>
-                                                </form>
-                                                <form action="{{ route('cart.remove', $id) }}" method="POST" style="display:inline;">
-                                                    @csrf
-                                                    <button class="cart-button" type="submit">Удалить из корзины</button>
-                                                </form>
+                                            <td colspan="5">
+                                                <b>
+                                                    ИТОГО: {{ number_format($cart['total'], 2, '.', ',') }} руб.
+                                                </b>
                                             </td>
                                         </tr>
-                                    @endforeach
+                                        <tr>
+                                            <td colspan="5">
+                                                <a href="{{ route('order.confirm') }}">Оформить заказ</a>
+                                            </td>
+                                        </tr>
                                 </tbody>
                             </table>
                         @else

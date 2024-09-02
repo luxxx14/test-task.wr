@@ -26,9 +26,12 @@ class CartController extends Controller
     public function showCart() {
         $cartKey = $this->getCartKey();
         $cart = Redis::hGetAll($cartKey);
+        $total = 0;
         foreach ($cart as &$item) {
             $item = json_decode($item, true);
+            $total += floatval($item['price']) * intval($item['quantity']);
         }
+        $cart['total'] = $total;
 
         return view('cart', compact('cart'));
     }
