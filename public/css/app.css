@@ -1,0 +1,11 @@
+
+.catalog-block {
+    max-width: 70%;
+}
+
+.product-card-block {
+    max-width: 200px;
+}
+.product-card-block H2, .product-card-block P {
+    cursor: default;
+}
