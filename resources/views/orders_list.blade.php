@@ -20,7 +20,7 @@
                 <a href="{{ url('/') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Каталог</a>
 
                 @auth
-                    <a href="{{ route('orders.show') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Заказы</a>
+                    <a href="{{ route('cart.show') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Корзина</a>
                     <a href="{{ route('logout') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Выход</a>
                 @else
                     <a href="{{ route('login') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Вход</a>
@@ -39,59 +39,44 @@
 
                 <div class="mt-16">
                     <div class="grid grid-cols-4 md:grid-cols-4 gap-6 lg:gap-8">
-                        @if(isset($cart) && !empty($cart) && count($cart) >= 2)
-
+                        @if($orderData->isNotEmpty())
                             <table width="1300px" class="cart-table">
                                 <thead>
                                     <tr>
-                                        <th>Название</th>
-                                        <th>Цена</th>
-                                        <th>Количество</th>
-                                        <th>Сумма</th>
+                                        <th>Номер заказа</th>
+                                        <th>Дата заказа</th>
+                                        <th>Товары</th>
+                                        <th>Стоимость</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($cart as $id => $item)
-                                        @if(is_array($item))
-                                            <tr>
-                                                <td>{{ $item['name'] }}</td>
-                                                <td>{{ $item['price'] }} руб. / шт.</td>
-                                                <td>{{ $item['quantity'] }}</td>
-                                                <td>{{ number_format($item['price'] * $item['quantity'], 2, '.', ',') }} руб.</td>
-                                                <td>
-                                                    <form action="{{ route('cart.update', $id) }}" method="POST">
-                                                        @csrf
-                                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1">
-                                                        <button class="cart-button" type="submit">Обновить</button>
-                                                    </form>
-                                                    <form action="{{ route('cart.remove', $id) }}" method="POST" style="display:inline;">
-                                                        @csrf
-                                                        <button class="cart-button" type="submit">Удалить из корзины</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
+                                    @foreach($orderData as $order)
                                         <tr>
-                                            <td colspan="5">
-                                                <b>
-                                                    ИТОГО: {{ number_format($cart['total'], 2, '.', ',') }} руб.
-                                                </b>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="5">
-                                                <form action="{{ route('order.confirm') }}" method="POST">
+                                            <td>{{ $order['order_id'] }}</td>
+                                            <td>{{ $order['order_date'] }}</td>
+                                            <td>{{ $order['items'] }}</td>
+                                            <td>{{ number_format($order['total_amount'], 2, '.', ',') }} руб.</td>
+                                            <td>
+                                                <form action="{{ route('order.remove', $order['order_id']) }}" method="POST" style="display:inline;">
                                                     @csrf
-                                                    <button class="order-confirm-button" type="submit">Оформить заказ</button>
+                                                    <button class="cart-button" type="submit">Удалить заказ</button>
                                                 </form>
                                             </td>
                                         </tr>
+                                    @endforeach
+                                    <tr>
+                                        <td colspan="5">
+                                            <br><br>
+                                            <b>
+                                                Итоговая стоимость всех заказов: {{ number_format($totalOrdersAmount, 2, '.', ',') }} руб.
+                                            </b>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         @else
-                            <p>Корзина пуста.</p>
+                            <p>Нет заказов для отображения.</p>
                         @endif
                     </div>
                 </div>

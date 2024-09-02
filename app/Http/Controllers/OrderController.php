@@ -26,11 +26,34 @@ class OrderController extends Controller
         $this->orderProducts = $orderProducts;
     }
 
-    public function showOrdersList() {
-        //$orders = $this->order->getOrdersList();
-        //$products_list = $this->product->orders()->get();
+    public function showOrdersList()
+    {
+        $orders = Order::with('orderProducts.product')->get();
+        $totalOrdersAmount = 0;
 
-        //return view('orders', compact('orders'));
+        $orderData = $orders->map(function ($order) use (&$totalOrdersAmount) {
+            // Общая стоимость товаров в заказе
+            $orderItems = $order->orderProducts->map(function ($orderProduct) {
+                return $orderProduct->product->name;
+            });
+
+            $orderItemsList = $orderItems->implode(', ');
+            $orderTotalAmount = $order->orderProducts->sum(function ($orderProduct) {
+                return $orderProduct->quantity * $orderProduct->product->price;
+            });
+
+            // Добавляем к итоговой стоимости
+            $totalOrdersAmount += $orderTotalAmount;
+
+            return [
+                'order_id' => $order->id,
+                'order_date' => $order->created_at->format('Y-m-d'),
+                'items' => $orderItemsList,
+                'total_amount' => $orderTotalAmount
+            ];
+        });
+
+        return view('orders_list', compact('orderData', 'totalOrdersAmount'));
     }
 
     public function confirmOrder(Request $request)
@@ -67,6 +90,20 @@ class OrderController extends Controller
         Redis::del($cartKey);
 
         return view('order_confirm');
+    }
+
+    public function deleteOrder($orderId)
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            return Redirect::back()->with('error', 'Заказ не найден.');
+        }
+
+        $order->orderProducts()->delete();
+        $order->delete();
+
+        return redirect()->route('orders.show')->with('success', 'Заказ успешно удален.');
     }
 
 }

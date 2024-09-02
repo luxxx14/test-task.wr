@@ -17,7 +17,8 @@ class CatalogController extends Controller
         $this->product = $product;
     }
 
-    public function showCatalog() {
+    public function showCatalog()
+    {
         $products = $this->product->getAllProducts();
 
         return view('welcome', compact('products'));
